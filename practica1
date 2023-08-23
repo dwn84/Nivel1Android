@@ -9,19 +9,20 @@ public class edwin{
 		double x1,x2,D;
 		
 		System.out.println("Programa para calcular las raices de una funcion cuadratica");
-		
+		//Separacion de la operacion de la raiz
 		D = (Math.pow(b, 2)) - (4 * a * c);
-		
-		if(a==0) {
-			
+		//Validación del contenido de la variable A
+		if(a==0) {			
 			System.out.println("No es posible realizar la operacion, el valor de A no puede ser cero");
 		}
 		else {
+			//Validación del contenido de la variable D para realizar la raiz cuadrada
 			if(D >= 0){
 				
 				x1 = (-b + Math.sqrt(D))/(2*a); 
 				x2 = (-b - Math.sqrt(D))/(2*a);
-				
+
+				//Mostrar los resultados
 				System.out.println("la primera raiz es:");
 				System.out.println(x1);
 				
