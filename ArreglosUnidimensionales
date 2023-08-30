@@ -1,0 +1,30 @@
+package miProgramita;
+
+public class arreglos {
+
+	public static void main(String[] args) {
+		//definición de arreglos unidimensionales
+		int[] x = new int[55];
+		long[] b = new long[7];
+		String[] listaEstudiantes = new String[15];
+		double[] notas = new double[15];
+		int n = 3;
+		byte[] a = new byte[n];
+		
+		//asignar valores a cada posicion de b
+		b[0] = 11;
+		b[1] = 22;
+		b[3] = 33;
+		b[6] = 44;
+		b[2] = b[1] * 5;
+    //Mostrar dato  
+		System.out.println(b[2]);
+    //Asignar datos tipo string(texto)
+		listaEstudiantes[0] = "Edwin";
+		listaEstudiantes[1] = "Alejandro";
+		listaEstudiantes[2] = "Viviana";
+		
+		
+	}
+
+}
