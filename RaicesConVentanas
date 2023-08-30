@@ -1,0 +1,45 @@
+package miProgramita;
+import javax.swing.JOptionPane;
+
+public class RaicesConVentana {
+
+	public static void main(String[] args) {
+		int a;
+		int b;		
+		int c;
+		double x1,x2,D;
+		
+		JOptionPane.showMessageDialog(null, "Programa para calcular raices de una ecuación cuadrática");
+		
+		a = Integer.parseInt(JOptionPane.showInputDialog("Ingrese valor de la variable A"));
+		b = Integer.parseInt(JOptionPane.showInputDialog("Ingrese valor de la variable B"));
+		c = Integer.parseInt(JOptionPane.showInputDialog("Ingrese valor de la variable C"));
+
+D = (Math.pow(b, 2)) - (4 * a * c);
+		
+		if(a==0) {
+			
+			System.out.println("No es posible realizar la operacion, el valor de A no puede ser cero");
+		}
+		else {
+			if(D >= 0){
+				
+				x1 = (-b + Math.sqrt(D))/(2*a); 
+				x2 = (-b - Math.sqrt(D))/(2*a);
+				
+				System.out.println("la primera raiz es:");
+				System.out.println(x1);
+				
+				System.out.println("la segunda raiz es:");
+				System.out.println(x2);				
+			}
+			else{
+				System.out.println("No es posible calcular las raiz, se genera un numero imaginario");
+			}	
+		}
+		
+
+		
+	}
+
+}
