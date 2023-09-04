@@ -4,12 +4,14 @@ public class arreglos {
 
 	public static void main(String[] args) {
 		//definición de arreglos unidimensionales
-		int[] x = new int[55];
-		long[] b = new long[7];
+		int[] x = new int[5555];
+		long[] b = new long[11];
 		String[] listaEstudiantes = new String[15];
 		double[] notas = new double[15];
 		int n = 3;
 		byte[] a = new byte[n];
+		//Creación del arreglo con valores
+		int[] serieNumerica = {11,44,55,77,88,-22,45};
 		
 		//asignar valores a cada posicion de b
 		b[0] = 11;
@@ -17,9 +19,20 @@ public class arreglos {
 		b[3] = 33;
 		b[6] = 44;
 		b[2] = b[1] * 5;
-    //Mostrar dato  
-		System.out.println(b[2]);
-    //Asignar datos tipo string(texto)
+		//Recorrer el arreglo
+		
+		for (int i = 0; i < b.length; i++) {
+			//mostrar el contenido del arreglo, elemento por elemento
+			System.out.println(b[i]);	
+			//guardar un cálculo en cada elemento
+			b[i] = 2 * i;
+		}
+		//Variante tipo foreach - recorrer todos y CADA UNO de los elementos
+		for (int dato : serieNumerica) {
+			System.out.println(dato);	
+		}
+
+		
 		listaEstudiantes[0] = "Edwin";
 		listaEstudiantes[1] = "Alejandro";
 		listaEstudiantes[2] = "Viviana";
