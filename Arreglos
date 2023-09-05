@@ -3,7 +3,7 @@ package miProgramita;
 public class arreglos {
 
 	public static void main(String[] args) {
-		//definición de arreglos unidimensionales
+		//definición de arreglos unidimensionales - vector
 		int[] x = new int[5555];
 		long[] b = new long[11];
 		String[] listaEstudiantes = new String[15];
@@ -12,14 +12,28 @@ public class arreglos {
 		byte[] a = new byte[n];
 		//Creación del arreglo con valores
 		int[] serieNumerica = {11,44,55,77,88,-22,45};
+		//definición de arreglos bidimensionales - matriz
+		int[][] y = new int[2][7];
 		
-		//asignar valores a cada posicion de b
+		//asignar valores a diferentes posiciones de b
 		b[0] = 11;
 		b[1] = 22;
 		b[3] = 33;
 		b[6] = 44;
 		b[2] = b[1] * 5;
-		//Recorrer el arreglo
+		
+		//asignar valores a diferentes posiciones de y
+		y[0][0]=33;
+		y[0][1]=serieNumerica[1];
+		y[0][2]=55;
+		y[0][6]=77;
+		y[1][1]=x[0] * 5;
+		y[1][6]=33;
+		
+		
+		System.out.println();
+		
+		//Recorrer el arreglo unidimensional
 		
 		for (int i = 0; i < b.length; i++) {
 			//mostrar el contenido del arreglo, elemento por elemento
@@ -31,8 +45,14 @@ public class arreglos {
 		for (int dato : serieNumerica) {
 			System.out.println(dato);	
 		}
-
-		
+		System.out.println("Datos de la tabla");
+		//Recorrer el arreglo bidimensional
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 7; j++) {
+				System.out.println(y[i][j]);
+				
+			}
+		}
 		listaEstudiantes[0] = "Edwin";
 		listaEstudiantes[1] = "Alejandro";
 		listaEstudiantes[2] = "Viviana";
