@@ -16,6 +16,7 @@ import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.text.DecimalFormat;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
@@ -25,10 +26,14 @@ import javax.swing.JTable;
 public class Tabla extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
+	private static final double i = 0.05;
 	private JPanel contentPane;
 	private JTextField txtValorPrestamo;
 	private JTextField txtMeses;	
 	private JTable tblDatos;
+	private boolean validarDinero;
+	private boolean validarMeses;	
+	private JButton btnCalcular;
 	
 
 	/**
@@ -50,7 +55,10 @@ public class Tabla extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Tabla() {
+	public Tabla() {		
+		
+		validarDinero = false;
+		validarMeses = false;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 566, 654);
@@ -85,7 +93,8 @@ public class Tabla extends JFrame {
 		txtValorPrestamo.addKeyListener(new KeyAdapter() {			
 			@Override
 			public void keyTyped(KeyEvent e) {				
-				validarTextField(e, lblAdvertenciaValor, txtValorPrestamo,1000000,500000000);
+				validarDinero = validarTextField(e, lblAdvertenciaValor, txtValorPrestamo,10000,500000000);
+				cambiarEstadoBoton(validarDinero, validarMeses);
 			}
 			@Override
 			public void keyPressed(KeyEvent e) {				
@@ -94,7 +103,8 @@ public class Tabla extends JFrame {
 					if (!valorAnterior.isEmpty()) {
 		                String valorNuevo = valorAnterior.substring(0, valorAnterior.length() - 1);
 		                if(!valorNuevo.isEmpty()) {
-		                	validarValores(valorNuevo, lblAdvertenciaValor,txtValorPrestamo,1000000,500000000);	
+		                	validarDinero = validarValores(valorNuevo, lblAdvertenciaValor,txtValorPrestamo,10000,500000000);
+		                	cambiarEstadoBoton(validarDinero, validarMeses);
 		                }		                					
 					}
 				}
@@ -114,7 +124,8 @@ public class Tabla extends JFrame {
 		txtMeses.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				validarTextField(e, lblElijeUnPlazo, txtMeses,48,84);
+				validarMeses = validarTextField(e, lblElijeUnPlazo, txtMeses,4,12);
+				cambiarEstadoBoton(validarDinero, validarMeses);
 			}
 			//Se ha duplicado código, no es la solución mas eficiente pero funciona
 			//se tiene deuda tecnica: https://asana.com/es/resources/technical-debt
@@ -125,7 +136,8 @@ public class Tabla extends JFrame {
 					if (!valorAnterior.isEmpty()) {
 		                String valorNuevo = valorAnterior.substring(0, valorAnterior.length() - 1);
 		                if(!valorNuevo.isEmpty()) {
-		                	validarValores(valorNuevo, lblElijeUnPlazo, txtMeses,48,84);	
+		                	validarMeses = validarValores(valorNuevo, lblElijeUnPlazo, txtMeses,4,12);
+		                	cambiarEstadoBoton(validarDinero, validarMeses);
 		                }		                					
 					}
 				}
@@ -139,13 +151,27 @@ public class Tabla extends JFrame {
 		lblNewLabel_2.setBounds(164, 236, 46, 14);
 		contentPane.add(lblNewLabel_2);
 		
-		JButton btnCalcular = new JButton("Simular");		
+		btnCalcular = new JButton("Simular");		
+		btnCalcular.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//calcular el valor de la mensualidad del préstamo
+				//https://heroku-cforemoto-blog-strapi.s3.us-west-2.amazonaws.com/amortizacion_y_fondos_5_0216_423ebf0bdc.jpeg
+				double A = Double.parseDouble(txtValorPrestamo.getText());
+				int n = Integer.parseInt(txtMeses.getText());
+				double cuota = (A*i)/(1-Math.pow((1+i),-n));
+
+				//casting de datos
+				DefaultTableModel modeloTablaDatos = (DefaultTableModel) tblDatos.getModel();
+			}
+		});
 		btnCalcular.setEnabled(false);
 		btnCalcular.setBounds(338, 80, 162, 23);
 		contentPane.add(btnCalcular);
 		
 		// Crear el modelo de datos con las columnas
+	/*
 		DefaultTableModel  model = new DefaultTableModel();
+		
         model.addColumn("Periodo");
         model.addColumn("Cuota");
         model.addColumn("Interes");
@@ -154,15 +180,38 @@ public class Tabla extends JFrame {
         
         Object[] fila = {1, 3333, 33333,333,33333};
         model.addRow(fila);   
-                
-		tblDatos = new JTable(model);
-		tblDatos.setBounds(56, 271, 384, 269);
-		contentPane.add(tblDatos);	
+*/
+        
+        
+		tblDatos = new JTable();
+		tblDatos.setModel(new javax.swing.table.DefaultTableModel(
+									new String [][] {
+										{"Periodo", 
+											"Cuota", 
+											"Interes", 
+											"Amortizacion", 
+											"Saldo"},										
+									},				
+									new String [] {
+												"Periodo", 
+												"Cuota", 
+												"Interes", 
+												"Amortizacion", 
+												"Saldo",
+												
+												})
+						);
+		tblDatos.setBounds(36, 291, 384, 249);
+		contentPane.add(tblDatos);
+		
+		
+		
 		
 		
 		
 	}
-	private void validarTextField(KeyEvent e, JLabel etiqueta, JTextField cuadroTexto, int min, int max) {
+	private boolean validarTextField(KeyEvent e, JLabel etiqueta, JTextField cuadroTexto, int min, int max) {
+		boolean validacionTexto = true;
 		char c = e.getKeyChar();				
         if (Character.isDigit(c)) {
         	
@@ -171,28 +220,43 @@ public class Tabla extends JFrame {
         	
             valorNuevo = valorAnterior + c;
         	 
-            validarValores(valorNuevo, etiqueta, cuadroTexto, min, max);
+            validacionTexto = validarValores(valorNuevo, etiqueta, cuadroTexto, min, max);
         			        	
         	//JOptionPane.showMessageDialog(null, "Se ha presionado un numero");    
-        }else{		        	
+        }else{
+        	validacionTexto = false;
         	e.consume();//Cancela el evento de recibir un dato
         	//JOptionPane.showMessageDialog(null, "Se ha ingresado una letra");
         }
+        return validacionTexto;
 		
 	}
 	
-	private void validarValores(String valorNuevo, JLabel etiqueta, JTextField cuadroTexto, int min, int max) {
+	private void cambiarEstadoBoton(boolean validacionDinero, boolean validacionMeses) {
+		boolean validacion = validacionDinero && validacionMeses;
+		if(validacion) {
+			btnCalcular.setEnabled(true);
+		}else {
+			btnCalcular.setEnabled(false);
+		}
 		
-		double prestamo = Double.parseDouble(valorNuevo);
+	}
+	
+	private boolean validarValores(String valorNuevo, JLabel etiqueta, JTextField cuadroTexto, int min, int max) {
+		boolean validacion = true;
+		double dato = Double.parseDouble(valorNuevo);
     	etiqueta.setForeground(Color.RED);
-    	if(prestamo<min) {
-    		etiqueta.setText("El mínimo es " + min);        		
-    	}else if(prestamo>max) {
-    		etiqueta.setText("El máximo es " + max);        		
+    	if(dato<min) {
+    		etiqueta.setText("El mínimo es " + min);  
+    		validacion = false;
+    	}else if(dato>max) {
+    		etiqueta.setText("El máximo es " + max);
+    		validacion = false;
     	}else {
     		etiqueta.setText("Monto Minimo: " + min + " - Monto Maximo: " + max);
     		etiqueta.setForeground(Color.BLACK);
     	}
+    	return validacion;
     	
 	}
 }
