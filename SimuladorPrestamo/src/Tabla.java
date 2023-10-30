@@ -17,6 +17,7 @@ import java.awt.event.InputMethodEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
@@ -162,6 +163,25 @@ public class Tabla extends JFrame {
 
 				//casting de datos
 				DefaultTableModel modeloTablaDatos = (DefaultTableModel) tblDatos.getModel();
+				String[] calculosPeriodos = new String[5]; 
+				calculosPeriodos[0] = "0";//Periodo
+				calculosPeriodos[1] = "-";//Cuota
+				calculosPeriodos[2] = "-";//Valor del Interes
+				calculosPeriodos[3] = "-";//Amortización
+				calculosPeriodos[4] = txtValorPrestamo.getText();//Saldo
+				
+				modeloTablaDatos.addRow(calculosPeriodos);
+				for (int j = 1; j <= n; j++) {
+					calculosPeriodos[0] = String.valueOf(j);
+					calculosPeriodos[1] = String.valueOf(cuota);
+					Double interes = A * i;
+					calculosPeriodos[2] = String.valueOf(interes);
+					Double amortizacion = cuota - interes;
+					calculosPeriodos[3] = String.valueOf(amortizacion);
+					A = A - amortizacion;
+					calculosPeriodos[4] = String.valueOf(A);
+					modeloTablaDatos.addRow(calculosPeriodos);
+				}
 			}
 		});
 		btnCalcular.setEnabled(false);
@@ -190,7 +210,7 @@ public class Tabla extends JFrame {
 											"Cuota", 
 											"Interes", 
 											"Amortizacion", 
-											"Saldo"},										
+											"Saldo"},
 									},				
 									new String [] {
 												"Periodo", 
