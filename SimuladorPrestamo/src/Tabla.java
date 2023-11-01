@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 
@@ -35,7 +37,7 @@ public class Tabla extends JFrame {
 	private boolean validarDinero;
 	private boolean validarMeses;	
 	private JButton btnCalcular;
-	
+	private DefaultTableModel tabla;	
 
 	/**
 	 * Launch the application.
@@ -60,6 +62,38 @@ public class Tabla extends JFrame {
 		
 		validarDinero = false;
 		validarMeses = false;
+
+		tabla = new DefaultTableModel(
+				new String [][] {
+					{"Periodo", 
+						"Cuota", 
+						"Interes", 
+						"Amortizacion", 
+						"Saldo"},
+				},				
+				new String [] {
+							"Periodo", 
+							"Cuota", 
+							"Interes", 
+							"Amortizacion", 
+							"Saldo",
+							
+							}) 
+				{
+					@Override
+					    public boolean isCellEditable(int row, int column) {
+			        return false; // Las celdas no serán editables
+									}
+			    };								
+
+
+			    tblDatos = new JTable(tabla);
+
+			    tblDatos.setBounds(36, 291, 384, 249);
+			    
+		
+		//casting de datos
+		//modeloTablaDatos = (DefaultTableModel) tblDatos.getModel();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 566, 654);
@@ -73,6 +107,8 @@ public class Tabla extends JFrame {
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblNewLabel.setBounds(36, 22, 331, 51);
 		contentPane.add(lblNewLabel);
+		
+		contentPane.add(tblDatos);
 		
 		JLabel lblNewLabel_1 = new JLabel("Valor del préstamo");
 		lblNewLabel_1.setBounds(46, 84, 137, 14);
@@ -91,6 +127,13 @@ public class Tabla extends JFrame {
 		contentPane.add(lblAdvertenciaValor);
 		
 		txtValorPrestamo = new JTextField();
+		txtValorPrestamo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				txtValorPrestamo.setCaretPosition(txtValorPrestamo.getDocument().getLength());
+			}
+		});
+		txtValorPrestamo.setDragEnabled(false);
 		txtValorPrestamo.addKeyListener(new KeyAdapter() {			
 			@Override
 			public void keyTyped(KeyEvent e) {				
@@ -104,7 +147,7 @@ public class Tabla extends JFrame {
 					if (!valorAnterior.isEmpty()) {
 		                String valorNuevo = valorAnterior.substring(0, valorAnterior.length() - 1);
 		                if(!valorNuevo.isEmpty()) {
-		                	validarDinero = validarValores(valorNuevo, lblAdvertenciaValor,txtValorPrestamo,10000,500000000);
+		                	validarDinero = validarValores(valorNuevo, lblAdvertenciaValor,10000,500000000);
 		                	cambiarEstadoBoton(validarDinero, validarMeses);
 		                }		                					
 					}
@@ -122,6 +165,7 @@ public class Tabla extends JFrame {
 		contentPane.add(lblElijeUnPlazo);
 		
 		txtMeses = new JTextField();
+		txtMeses.setDragEnabled(false);
 		txtMeses.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -137,7 +181,7 @@ public class Tabla extends JFrame {
 					if (!valorAnterior.isEmpty()) {
 		                String valorNuevo = valorAnterior.substring(0, valorAnterior.length() - 1);
 		                if(!valorNuevo.isEmpty()) {
-		                	validarMeses = validarValores(valorNuevo, lblElijeUnPlazo, txtMeses,4,12);
+		                	validarMeses = validarValores(valorNuevo, lblElijeUnPlazo,4,12);
 		                	cambiarEstadoBoton(validarDinero, validarMeses);
 		                }		                					
 					}
@@ -155,74 +199,27 @@ public class Tabla extends JFrame {
 		btnCalcular = new JButton("Simular");		
 		btnCalcular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//calcular el valor de la mensualidad del préstamo
-				//https://heroku-cforemoto-blog-strapi.s3.us-west-2.amazonaws.com/amortizacion_y_fondos_5_0216_423ebf0bdc.jpeg
-				double A = Double.parseDouble(txtValorPrestamo.getText());
-				int n = Integer.parseInt(txtMeses.getText());
-				double cuota = (A*i)/(1-Math.pow((1+i),-n));
-
-				//casting de datos
-				DefaultTableModel modeloTablaDatos = (DefaultTableModel) tblDatos.getModel();
-				String[] calculosPeriodos = new String[5]; 
-				calculosPeriodos[0] = "0";//Periodo
-				calculosPeriodos[1] = "-";//Cuota
-				calculosPeriodos[2] = "-";//Valor del Interes
-				calculosPeriodos[3] = "-";//Amortización
-				calculosPeriodos[4] = txtValorPrestamo.getText();//Saldo
-				
-				modeloTablaDatos.addRow(calculosPeriodos);
-				for (int j = 1; j <= n; j++) {
-					calculosPeriodos[0] = String.valueOf(j);
-					calculosPeriodos[1] = String.valueOf(cuota);
-					Double interes = A * i;
-					calculosPeriodos[2] = String.valueOf(interes);
-					Double amortizacion = cuota - interes;
-					calculosPeriodos[3] = String.valueOf(amortizacion);
-					A = A - amortizacion;
-					calculosPeriodos[4] = String.valueOf(A);
-					modeloTablaDatos.addRow(calculosPeriodos);
-				}
+				borrarDatosTabla();
+				calcularDatosTabla();
 			}
 		});
 		btnCalcular.setEnabled(false);
 		btnCalcular.setBounds(338, 80, 162, 23);
 		contentPane.add(btnCalcular);
 		
-		// Crear el modelo de datos con las columnas
-	/*
-		DefaultTableModel  model = new DefaultTableModel();
+		JButton btnBorrarTextos = new JButton("Limpiar");
+		btnBorrarTextos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtValorPrestamo.setText("");
+				txtMeses.setText("");
+		        // Dando foco al JTextField
+				txtValorPrestamo.requestFocus();
+			}
+		});
+		btnBorrarTextos.setBounds(336, 122, 164, 23);
+		contentPane.add(btnBorrarTextos);
 		
-        model.addColumn("Periodo");
-        model.addColumn("Cuota");
-        model.addColumn("Interes");
-        model.addColumn("Amortizacion");
-        model.addColumn("Saldo");
-        
-        Object[] fila = {1, 3333, 33333,333,33333};
-        model.addRow(fila);   
-*/
-        
-        
-		tblDatos = new JTable();
-		tblDatos.setModel(new javax.swing.table.DefaultTableModel(
-									new String [][] {
-										{"Periodo", 
-											"Cuota", 
-											"Interes", 
-											"Amortizacion", 
-											"Saldo"},
-									},				
-									new String [] {
-												"Periodo", 
-												"Cuota", 
-												"Interes", 
-												"Amortizacion", 
-												"Saldo",
-												
-												})
-						);
-		tblDatos.setBounds(36, 291, 384, 249);
-		contentPane.add(tblDatos);
+
 		
 		
 		
@@ -237,10 +234,10 @@ public class Tabla extends JFrame {
         	
         	String valorAnterior = cuadroTexto.getText();
         	String valorNuevo = "";            
-        	
+        	System.out.println(valorAnterior);
             valorNuevo = valorAnterior + c;
-        	 
-            validacionTexto = validarValores(valorNuevo, etiqueta, cuadroTexto, min, max);
+        	System.out.println(valorNuevo);
+            validacionTexto = validarValores(valorNuevo, etiqueta,  min, max);
         			        	
         	//JOptionPane.showMessageDialog(null, "Se ha presionado un numero");    
         }else{
@@ -261,8 +258,43 @@ public class Tabla extends JFrame {
 		}
 		
 	}
+
+	private void calcularDatosTabla() {
+		//calcular el valor de la mensualidad del préstamo
+		//https://heroku-cforemoto-blog-strapi.s3.us-west-2.amazonaws.com/amortizacion_y_fondos_5_0216_423ebf0bdc.jpeg
+		double A = Double.parseDouble(txtValorPrestamo.getText());
+		int n = Integer.parseInt(txtMeses.getText());
+		double cuota = (A*i)/(1-Math.pow((1+i),-n));
+
+		String[] calculosPeriodos = new String[5]; 
+		calculosPeriodos[0] = "0";//Periodo
+		calculosPeriodos[1] = "-";//Cuota
+		calculosPeriodos[2] = "-";//Valor del Interes
+		calculosPeriodos[3] = "-";//Amortización
+		calculosPeriodos[4] = txtValorPrestamo.getText();//Saldo
+		
+		tabla.addRow(calculosPeriodos);
+		DecimalFormat formatoDecimal = new DecimalFormat("#.##");
+		for (int j = 1; j <= n; j++) {
+			calculosPeriodos[0] = String.valueOf(j);
+			calculosPeriodos[1] = String.valueOf(formatoDecimal.format(cuota));
+			Double interes = A * i;
+			calculosPeriodos[2] = String.valueOf(formatoDecimal.format(interes));
+			Double amortizacion = cuota - interes;
+			calculosPeriodos[3] = String.valueOf(formatoDecimal.format(amortizacion));
+			A = A - amortizacion;
+			calculosPeriodos[4] = String.valueOf(formatoDecimal.format(A));
+			tabla.addRow(calculosPeriodos);			
+		}
+
+		
+	}
 	
-	private boolean validarValores(String valorNuevo, JLabel etiqueta, JTextField cuadroTexto, int min, int max) {
+	private void borrarDatosTabla() {
+		tabla.setRowCount(1);
+	}
+	
+	private boolean validarValores(String valorNuevo, JLabel etiqueta, int min, int max) {
 		boolean validacion = true;
 		double dato = Double.parseDouble(valorNuevo);
     	etiqueta.setForeground(Color.RED);
