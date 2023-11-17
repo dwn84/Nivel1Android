@@ -1,7 +1,8 @@
 package vista;
 
-import java.awt.EventQueue;
+import controlador.conexionDB;
 
+import java.awt.EventQueue;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -60,6 +61,8 @@ public class frmEventos extends JFrame {
 	 */
 	public frmEventos() {		
 		
+		conexionDB baseDatos = new conexionDB();
+		baseDatos.abrirBaseDatos();
 		
 		tabla = new DefaultTableModel(
 				new String [][] {
@@ -229,8 +232,11 @@ public class frmEventos extends JFrame {
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cambiarEstadoObjetos(false);
-				btnGuardar.setText("Nuevo");
+				btnGuardar.setText("Nuevo");				
 				btnCancelar.setVisible(false);
+				txtFecha.setText("");
+				txtLugar.setText("");
+				txtNombre.setText("");	
 			}
 			
 		});
