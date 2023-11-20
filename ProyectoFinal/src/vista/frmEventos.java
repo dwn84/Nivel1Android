@@ -1,6 +1,6 @@
 package vista;
 
-import controlador.conexionDB;
+import controlador.EventoController;
 
 import java.awt.EventQueue;
 import javax.swing.Icon;
@@ -61,8 +61,7 @@ public class frmEventos extends JFrame {
 	 */
 	public frmEventos() {		
 		
-		conexionDB baseDatos = new conexionDB();
-		baseDatos.abrirBaseDatos();
+
 		
 		tabla = new DefaultTableModel(
 				new String [][] {
@@ -251,6 +250,13 @@ public class frmEventos extends JFrame {
 					cambiarEstadoObjetos(true);
 					btnGuardar.setText("Guardar");
 					btnCancelar.setVisible(true);
+				}
+				if(btnGuardar.getText() == "Guardar") {
+					System.out.println("Empieza el proceso de guardado");
+					EventoController miNuevoEvento = new EventoController();
+					miNuevoEvento.guardarEvento("a","a","a","a","a","a","a","a");
+					
+					
 				}
 			}
 		});
