@@ -105,7 +105,9 @@ public class Evento {
 			this.estado = estado;
 		} 
 		
-		public void agregarEvento(Connection conexionDB) {
+		public boolean agregarEvento(Connection conexionDB) {
+			
+			boolean respuesta = true;
 			String sql = "INSERT INTO tbleventos"
 					+ "(nombre, "
 					+ "tipoEvento, "
@@ -128,11 +130,20 @@ public class Evento {
 			try {
 				Statement ejecutarComandoSQL = conexionDB.createStatement();
 				ejecutarComandoSQL.executeUpdate(sql);
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				System.out.println("Error en consulta");
-				e.printStackTrace();
+				System.out.println(e.getMessage());
+				respuesta = false;				
+				
 			}
+			return respuesta;
 			
 		}
+		
+		public void actualizarEvento() {}
+		public void EliminarEvento() {}
+		public void mostrarEventos() {}
+		public void buscarEvento() {}
+		
 }

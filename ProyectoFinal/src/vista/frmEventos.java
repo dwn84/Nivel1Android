@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
@@ -250,12 +252,34 @@ public class frmEventos extends JFrame {
 					cambiarEstadoObjetos(true);
 					btnGuardar.setText("Guardar");
 					btnCancelar.setVisible(true);
-				}
-				if(btnGuardar.getText() == "Guardar") {
+				}else if(btnGuardar.getText() == "Guardar") {
 					System.out.println("Empieza el proceso de guardado");
 					EventoController miNuevoEvento = new EventoController();
-					miNuevoEvento.guardarEvento("a","a","a","a","a","a","a","a");
-					
+
+					String horaInicio = cmbHoraInicio.getSelectedItem().toString() + cmbAMPMinicio.getSelectedItem().toString();
+					String horaFinal = cmbHoraFinal.getSelectedItem().toString() + cmbAMPMfinal.getSelectedItem().toString();
+					String boleteria = "";
+					if(rdbtnBoleteriaSi.isSelected()) {
+						boleteria = "Si"	;
+					}else {
+						boleteria = "No"	;
+					}
+					 
+					boolean respuestaFinal = miNuevoEvento.guardarEvento(
+																			txtNombre.getText(),
+																			cmbEstado.getSelectedItem().toString(),
+																			txtFecha.getText(),
+																			horaInicio,
+																			horaFinal,
+																			txtLugar.getText(),
+																			boleteria,
+																			cmbEstado.getSelectedItem().toString()																			
+																		);
+					if (respuestaFinal==true) {
+						JOptionPane.showMessageDialog(null, "Datos guardados correctamente");
+					}else {
+						JOptionPane.showMessageDialog(null, "Error interno");	
+					}
 					
 				}
 			}
