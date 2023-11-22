@@ -41,6 +41,7 @@ public class frmEventos extends JFrame {
 	private JComboBox cmbHoraFinal;
 	private JComboBox cmbAMPMfinal;
 	private JButton btnGuardar;
+	private JButton btnCancelar;
 
 	/**
 	 * Launch the application.
@@ -61,9 +62,11 @@ public class frmEventos extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public frmEventos() {		
+	public frmEventos() {	
 		
-
+		
+		EventoController ListaEventos = new EventoController();
+		ListaEventos.mostrarEventos();
 		
 		tabla = new DefaultTableModel(
 				new String [][] {
@@ -229,15 +232,10 @@ public class frmEventos extends JFrame {
 		cmbEstado.setBounds(120, 584, 375, 22);
 		contentPane.add(cmbEstado);
 		
-		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cambiarEstadoObjetos(false);
-				btnGuardar.setText("Nuevo");				
-				btnCancelar.setVisible(false);
-				txtFecha.setText("");
-				txtLugar.setText("");
-				txtNombre.setText("");	
+				borronyCuentaNueva();
 			}
 			
 		});
@@ -255,7 +253,12 @@ public class frmEventos extends JFrame {
 				}else if(btnGuardar.getText() == "Guardar") {
 					System.out.println("Empieza el proceso de guardado");
 					EventoController miNuevoEvento = new EventoController();
-
+					String tipoEvento = "";
+					if (cmbTipo.getSelectedIndex()==0) {
+						tipoEvento = "C";
+					}else {
+						tipoEvento = "D";
+					}
 					String horaInicio = cmbHoraInicio.getSelectedItem().toString() + cmbAMPMinicio.getSelectedItem().toString();
 					String horaFinal = cmbHoraFinal.getSelectedItem().toString() + cmbAMPMfinal.getSelectedItem().toString();
 					String boleteria = "";
@@ -267,7 +270,7 @@ public class frmEventos extends JFrame {
 					 
 					boolean respuestaFinal = miNuevoEvento.guardarEvento(
 																			txtNombre.getText(),
-																			cmbEstado.getSelectedItem().toString(),
+																			tipoEvento,
 																			txtFecha.getText(),
 																			horaInicio,
 																			horaFinal,
@@ -275,12 +278,13 @@ public class frmEventos extends JFrame {
 																			boleteria,
 																			cmbEstado.getSelectedItem().toString()																			
 																		);
-					if (respuestaFinal==true) {
+					if (respuestaFinal) {
 						JOptionPane.showMessageDialog(null, "Datos guardados correctamente");
 					}else {
 						JOptionPane.showMessageDialog(null, "Error interno");	
 					}
 					
+					borronyCuentaNueva();
 				}
 			}
 		});
@@ -311,5 +315,19 @@ public class frmEventos extends JFrame {
 		rdbtnBoleteriaSi.setEnabled(estado);
 		
 	}
+	
+	private void borronyCuentaNueva() {
+		cambiarEstadoObjetos(false);
+		btnGuardar.setText("Nuevo");				
+		btnCancelar.setVisible(false);
+		txtFecha.setText("");
+		txtLugar.setText("");
+		txtNombre.setText("");	
+	}
+	
+	private void limpiarDatosTabla() {
+		tabla.setRowCount(1);
+	}
+	
 }
 

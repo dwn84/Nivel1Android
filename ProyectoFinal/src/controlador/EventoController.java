@@ -34,7 +34,13 @@ public class EventoController {
 	
 	public void actualizarEvento() {}
 	public void EliminarEvento() {}
-	public void mostrarEventos() {}
+	public void mostrarEventos() {
+		conexionDB baseDatos = new conexionDB();
+		Connection conexionactiva = baseDatos.abrirBaseDatos();
+		Evento miEvento = new Evento();
+		miEvento.mostrarEventos(conexionactiva);
+		
+	}
 	public void buscarEvento() {}
 	
 

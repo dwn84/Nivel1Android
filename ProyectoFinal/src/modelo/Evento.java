@@ -1,8 +1,10 @@
 package modelo;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Evento {
 	
@@ -50,6 +52,11 @@ public class Evento {
 			this.codigoEvento = codigoEvento;
 		
 		}
+		
+		public Evento() {			
+		
+		}
+		
 		public int getCodigoEvento() {
 			return codigoEvento;
 		}
@@ -143,7 +150,43 @@ public class Evento {
 		
 		public void actualizarEvento() {}
 		public void EliminarEvento() {}
-		public void mostrarEventos() {}
+		public void mostrarEventos(Connection conexionDB) {
+			
+			String consulta = "SELECT * FROM tbleventos;"; 
+			ResultSet datosMySQL;
+			ArrayList<Evento> infoTransformadaJava = new ArrayList<Evento>();
+			
+			try {
+				Statement ejecutarComandoSQL = conexionDB.createStatement();
+				datosMySQL = ejecutarComandoSQL.executeQuery(consulta);
+				
+				while(datosMySQL.next()) {
+					Evento fila = new Evento(
+												datosMySQL.getInt("codigoEvento"), 
+												datosMySQL.getString("nombre"), 
+												datosMySQL.getString("tipoEvento"), 
+												datosMySQL.getString("fecha"), 
+												datosMySQL.getString("horaInicio"), 
+												datosMySQL.getString("horaFinal"), 
+												datosMySQL.getString("lugar"), 
+												datosMySQL.getString("boleteria"), 
+												datosMySQL.getString("estado")
+											);
+					infoTransformadaJava.add(fila);
+					
+				}
+				System.out.println("");
+				
+				
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+								
+				
+			}
+			
+		}
 		public void buscarEvento() {}
 		
 }
