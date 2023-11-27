@@ -1,6 +1,7 @@
 package vista;
 
 import controlador.EventoController;
+import modelo.Evento;
 
 import java.awt.EventQueue;
 import javax.swing.Icon;
@@ -19,9 +20,12 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class frmEventos extends JFrame {
 
@@ -42,6 +46,8 @@ public class frmEventos extends JFrame {
 	private JComboBox cmbAMPMfinal;
 	private JButton btnGuardar;
 	private JButton btnCancelar;
+	private JButton btnEliminar;
+	private int codigoEventoSeleccionado;
 
 	/**
 	 * Launch the application.
@@ -64,13 +70,11 @@ public class frmEventos extends JFrame {
 	 */
 	public frmEventos() {	
 		
-		
-		EventoController ListaEventos = new EventoController();
-		ListaEventos.mostrarEventos();
-		
 		tabla = new DefaultTableModel(
 				new String [][] {
-					{"Nombre", 
+					{
+						"Código",
+						"Nombre", 
 						"Tipo", 
 						"Fecha", 
 						"Hora inicial", 
@@ -80,6 +84,7 @@ public class frmEventos extends JFrame {
 						"Estado"},
 				},				
 				new String [] {
+						"Código",
 						"Nombre", 
 						"Tipo", 
 						"Fecha", 
@@ -95,7 +100,8 @@ public class frmEventos extends JFrame {
 			        return false; // Las celdas no serán editables
 									}
 			    };		
-		
+		limpiarDatosTabla();
+		cargarDatosTabalMYSQL();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 570, 739);
 		contentPane = new JPanel();
@@ -113,6 +119,14 @@ public class frmEventos extends JFrame {
 		lblLogo.setIcon(nuevoLogo);
 		
 		table = new JTable(tabla);
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i = table.getSelectedRow();
+				codigoEventoSeleccionado = (int) tabla.getValueAt(i, 0);
+				btnEliminar.setVisible(true);
+			}
+		});
 		table.setBorder(new LineBorder(new Color(0, 0, 0)));
 		table.setBounds(23, 148, 521, 212);
 		contentPane.add(table);
@@ -285,13 +299,23 @@ public class frmEventos extends JFrame {
 					}
 					
 					borronyCuentaNueva();
+					limpiarDatosTabla();
+					cargarDatosTabalMYSQL();
 				}
 			}
 		});
 		btnGuardar.setBounds(28, 646, 142, 23);
 		contentPane.add(btnGuardar);
 		
-		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventoController borrarEvento = new EventoController();
+				borrarEvento.EliminarEvento(codigoEventoSeleccionado);
+				limpiarDatosTabla();
+				cargarDatosTabalMYSQL();
+			}
+		});
 		btnEliminar.setVisible(false);
 		btnEliminar.setBounds(202, 646, 169, 23);
 		contentPane.add(btnEliminar);
@@ -327,6 +351,25 @@ public class frmEventos extends JFrame {
 	
 	private void limpiarDatosTabla() {
 		tabla.setRowCount(1);
+	}
+	
+	private void cargarDatosTabalMYSQL() {
+		EventoController ListaEventos = new EventoController();
+		ArrayList<Evento> info = ListaEventos.mostrarEventos();
+		for (Evento datos : info) {
+			Object[] fila = new Object[9];
+			fila[0] = datos.getCodigoEvento();
+			fila[1] = datos.getNombre();
+			fila[2] = datos.getTipoEvento();
+			fila[3] = datos.getFecha();
+			fila[4] = datos.getHoraInicio();
+			fila[5] = datos.getHoraFinal();
+			fila[6] = datos.getLugar();
+			fila[7] = datos.getBoleteria();
+			fila[8] = datos.getEstado();			
+			tabla.addRow(fila);
+		}
+		
 	}
 	
 }

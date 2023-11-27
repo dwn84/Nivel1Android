@@ -149,8 +149,24 @@ public class Evento {
 		}
 		
 		public void actualizarEvento() {}
-		public void EliminarEvento() {}
-		public void mostrarEventos(Connection conexionDB) {
+		public void EliminarEvento(Connection conexionDB,int codigoE) {
+			String consulta = "DELECT FROM tbleventos"
+								+ "WHERE codigoEvento = "
+								+ codigoE
+								+ ";";
+			
+			try {
+				Statement ejecutarComandoSQL = conexionDB.createStatement();
+				ejecutarComandoSQL.executeUpdate(consulta);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+								
+				
+			}
+		}
+		public ArrayList mostrarEventos(Connection conexionDB) {
 			
 			String consulta = "SELECT * FROM tbleventos;"; 
 			ResultSet datosMySQL;
@@ -175,15 +191,13 @@ public class Evento {
 					infoTransformadaJava.add(fila);
 					
 				}
-				System.out.println("");
+				return infoTransformadaJava;
 				
 				
 				
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				System.out.println(e.getMessage());
-								
-				
+												
+				return null;
 			}
 			
 		}

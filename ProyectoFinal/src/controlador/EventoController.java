@@ -1,5 +1,6 @@
 package controlador;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import controlador.conexionDB;
 import modelo.Evento;
@@ -33,12 +34,17 @@ public class EventoController {
 	}
 	
 	public void actualizarEvento() {}
-	public void EliminarEvento() {}
-	public void mostrarEventos() {
+	public void EliminarEvento(int CodigoEVista) {
+		conexionDB baseDatos = new conexionDB();
+		Connection conexionactiva = baseDatos.abrirBaseDatos();
+		Evento miEvento = new Evento();//MODELO
+		miEvento.EliminarEvento(conexionactiva,CodigoEVista);
+	}
+	public ArrayList mostrarEventos() {
 		conexionDB baseDatos = new conexionDB();
 		Connection conexionactiva = baseDatos.abrirBaseDatos();
 		Evento miEvento = new Evento();
-		miEvento.mostrarEventos(conexionactiva);
+		return miEvento.mostrarEventos(conexionactiva);
 		
 	}
 	public void buscarEvento() {}
