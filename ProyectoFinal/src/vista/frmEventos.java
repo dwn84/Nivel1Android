@@ -121,10 +121,22 @@ public class frmEventos extends JFrame {
 		table = new JTable(tabla);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {				
+				
 				int i = table.getSelectedRow();
 				codigoEventoSeleccionado = (int) tabla.getValueAt(i, 0);
+				
+				btnGuardar.setText("Actualizar");				
+				btnCancelar.setVisible(true);
 				btnEliminar.setVisible(true);
+				
+				txtNombre.setText(tabla.getValueAt(i, 1).toString());
+				txtFecha.setText(tabla.getValueAt(i, 3).toString());
+				txtLugar.setText(tabla.getValueAt(i, 6).toString());
+				txtNombre.requestFocus();
+				
+				cambiarEstadoObjetos(true);
+				
 			}
 		});
 		table.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -301,6 +313,44 @@ public class frmEventos extends JFrame {
 					borronyCuentaNueva();
 					limpiarDatosTabla();
 					cargarDatosTabalMYSQL();
+				}else if(btnGuardar.getText() == "Actualizar") {
+					System.out.println("Empieza el proceso de actualizar");
+					EventoController miNuevoEvento = new EventoController();
+					String tipoEvento = "";
+					if (cmbTipo.getSelectedIndex()==0) {
+						tipoEvento = "C";
+					}else {
+						tipoEvento = "D";
+					}
+					String horaInicio = cmbHoraInicio.getSelectedItem().toString() + cmbAMPMinicio.getSelectedItem().toString();
+					String horaFinal = cmbHoraFinal.getSelectedItem().toString() + cmbAMPMfinal.getSelectedItem().toString();
+					String boleteria = "";
+					if(rdbtnBoleteriaSi.isSelected()) {
+						boleteria = "Si"	;
+					}else {
+						boleteria = "No"	;
+					}
+					 
+					boolean respuestaFinal = miNuevoEvento.actualizarEvento(
+																			codigoEventoSeleccionado,
+																			txtNombre.getText(),
+																			tipoEvento,
+																			txtFecha.getText(),
+																			horaInicio,
+																			horaFinal,
+																			txtLugar.getText(),
+																			boleteria,
+																			cmbEstado.getSelectedItem().toString()																			
+																		);
+					if (respuestaFinal) {
+						JOptionPane.showMessageDialog(null, "Datos actualizados correctamente");
+					}else {
+						JOptionPane.showMessageDialog(null, "Error interno");	
+					}
+					
+					borronyCuentaNueva();
+					limpiarDatosTabla();
+					cargarDatosTabalMYSQL();
 				}
 			}
 		});
@@ -314,6 +364,9 @@ public class frmEventos extends JFrame {
 				borrarEvento.EliminarEvento(codigoEventoSeleccionado);
 				limpiarDatosTabla();
 				cargarDatosTabalMYSQL();
+				btnEliminar.setVisible(false);
+				borronyCuentaNueva();
+				
 			}
 		});
 		btnEliminar.setVisible(false);
@@ -344,6 +397,7 @@ public class frmEventos extends JFrame {
 		cambiarEstadoObjetos(false);
 		btnGuardar.setText("Nuevo");				
 		btnCancelar.setVisible(false);
+		btnEliminar.setVisible(false);
 		txtFecha.setText("");
 		txtLugar.setText("");
 		txtNombre.setText("");	

@@ -148,9 +148,59 @@ public class Evento {
 			
 		}
 		
-		public void actualizarEvento() {}
+		public boolean actualizarEvento(Connection conexionDB) {
+			
+			boolean respuesta = true;
+			
+			String consultaActualizar = "UPDATE tbleventos "
+										+ "SET "
+											+ "codigoEvento = '"
+												+ codigoEvento
+											+ "',"
+											+ "nombre = '"
+												+ nombre
+											+ "',"
+											+ "tipoEvento = '"
+												+ tipoEvento
+											+ "',"
+											+ "fecha = '"
+												+ fecha
+											+ "',"
+											+ "horaInicio = '"
+												+ horaInicio
+											+ "',"
+											+ "horaFinal = '"
+												+ horaFinal
+											+ "',"
+											+ "lugar = '"
+												+ lugar
+											+ "',"
+											+ "boleteria = '"
+												+ boleteria
+											+ "',"
+											+ "estado = '"
+												+ estado
+											+ "' "
+										+ "WHERE "
+											+ "codigoEvento = "
+											+ codigoEvento
+											+ ";";
+			
+			try {
+				Statement ejecutarComandoSQL = conexionDB.createStatement();
+				ejecutarComandoSQL.executeUpdate(consultaActualizar);
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.out.println(e.getMessage());
+				respuesta = false;				
+				
+			}
+			return respuesta;
+			
+		}
 		public void EliminarEvento(Connection conexionDB,int codigoE) {
-			String consulta = "DELECT FROM tbleventos"
+			String consulta = "DELETE FROM tbleventos "
 								+ "WHERE codigoEvento = "
 								+ codigoE
 								+ ";";
